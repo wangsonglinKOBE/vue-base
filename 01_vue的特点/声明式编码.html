@@ -7,15 +7,14 @@
 </head>
 
 <body>
-
-  <!-- vue采用声明式编码，这里不做vue的引入，下面为伪代码，仅供参考 -->
+  <!-- 此代码为伪代码，不做vue的引入，仅供参考 -->
   <ul id="list">
     <li v-for="p in persons">
       {{p.id}} - {{p.name}} - {{p.age}}
     </li>
   </ul>
 
-  <script>
+  <script type="text/javascript">
     const persons = [
       { id: '1', name: '张三', age: 18 },
       { id: '2', name: '李四', age: 19 },
