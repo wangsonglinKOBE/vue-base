@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>何为数据代理</title>
+</head>
+
+<body>
+  <!-- 数据代理：通过一个对象(obj2)代理另一个对象(obj)中属性的操作 (读、写) -->
+  <!-- 
+    这里我们定义两个对象，分别为 obj 和 obj2,
+    obj 里面有一个 x 属性，值为 100
+    obj2 里面有一个 y 属性，值为 200
+    现在我们使用 Object.defineProperty 实现数据代理，
+    让 obj2 这个对象也能 读取到 obj 里的 x 属性，并且可以对 obj 里的 x 属性进行修改
+  -->
+
+  <script type="text/javascript">
+
+    let obj = { x : 100 }
+    let obj2 = { y : 200 }
+
+    Object.defineProperty(obj2, 'x', {
+      get() {
+        return obj.x
+      },
+      set(value) {
+        obj.x = value
+      }
+    })
+
+    // 这样就实现了一个简单的数据代理，如果你想读取 obj 对象里的 x 属性的值，可以通过 obj2.x 来读取：控制台操作：obj2.x
+                                  // 如果你想更改 obj 对象里的 x 属性的值，可以通过 obj2.x = 500 来更改，控制台操作：obj2.x = 500, 那么现在 obj 里的 x 也为 500
+  </script>
+</body>
+
+</html>

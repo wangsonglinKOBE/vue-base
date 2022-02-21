@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>回顾 Object.defindproperty 方法</title>
+</head>
+
+<body>
+
+  <script type="text/javascript">
+    let person = {
+      name: 'kobe',
+      sex: '男'
+    }
+
+    // 给 person 对象增加一个 age 属性，值为 18
+    /* 
+      第一个参数: 要添加属性的对象(person)
+      第二个参数: 要添加的属性名(age)
+      第三个参数: 配置对象 {...}
+    */
+    Object.defineProperty(person, 'age', {
+      value: 18 //指定属性值
+    })
+    /* 
+      输出一下通过 Object.defineProperty 方法给 person 加完 age 属性后的 person 对象
+      输出 person 对象后，点开它，发现 age 属性的颜色和 name，sex属性的颜色不一样,表示 age 属性是不能枚举(遍历)的
+      下面验证一下 age 属性是否真的不能枚举(遍历)
+    */
+    console.log(person);
+    console.log(Object.keys(person)); // 输出：['name', 'sex']
+    for (const key in person) {
+      console.log('@', person[key]); //输出 ：@ kobe @ 男
+      console.log('--------------------分割线1-----------------------------------');
+    }
+
+
+
+    /* enumerable 使通过Object.defineProperty为对象添加的属性可以枚举(遍历) */
+    let person2 = {
+      name: 'jack',
+      sex: '男'
+    }
+    Object.defineProperty(person2, 'age', {
+      value: 22, //指定属性值
+      enumerable: true // 控制属性是否可以枚举(遍历)，默认值为 false
+    })
+    console.log(Object.keys(person2)); //输出：['name', 'sex', 'age']
+    console.log('----------------分割线2-------------------------');
+
+
+
+    /* writable 使通过Object.defineProperty为对象添加的属性是否可以被修改 */
+    let person3 = {
+      name: 'lisa',
+      sex: '女',
+      // age: 33 // 直接在 对象中添加
+    }
+    // 当直接在 person3 对象中添加 age 属性时 是可以改 person3 对象的 age 属性的，我们在控制台操作一下：person3.age = 34, person3，最后改完的 person3 为：{name: 'lisa', sex: '女', age: 34}
+    // (在没有设置writable为true的情况下)当通过 Object.defineProperty 方法为对象添加属性时 age 属性改变后，person3对象的 age 属性还是33，不会改变，在控制台操作一下：person3.age = 34, person3，最后改完的 person3 为：{name: 'lisa', sex: '女', age: 33}
+    Object.defineProperty(person3, 'age', {
+      value: 33, //指定属性值
+      enumerable: true, // 控制属性是否可以枚举(遍历)，默认值为 false
+      writable: true // 控制属性是否可以被修改，默认值为 false
+    })
+    console.log('----------------分割线3----------------------------');
+
+
+
+    /* configurable 使通过Object.defineProperty为对象添加的属性是否可以被删除 */
+    let person4 = {
+      name: 'tom',
+      sex: '男',
+      // age: 44 // 直接在 对象中添加
+    }
+    // 当直接在 person4 对象中添加 age 属性时 是可以删除 person4 对象的 age 属性的，我们在控制台操作一下：delete person4.age, person4，删除后的 person4 为：{name: 'tom', sex: '男'}
+    // (在没有设置configurable为true的情况下)当通过 Object.defineProperty 方法为对象添加属性时删除 age 属性，person4对象的 age 属性不会被删除，在控制台操作一下：delete person4.age, person4，删除后 person4 依然为：{name: 'tom', sex: '男', age: 44}
+    Object.defineProperty(person4, 'age', {
+      value: 44, //指定属性值
+      enumerable: true, // 控制属性是否可以枚举(遍历)，默认值为 false
+      writable: true, // 控制属性是否可以被修改，默认值为 false
+      configurable: true // 控制属性是否可以被删除，默认值为 false
+    })
+    console.log('----------------分割线4----------------------------');
+
+
+
+
+    /* getter 函数返回 age 的值，读取外部 number ，现用现取，当 number 发生改变时，age 的值也会跟着改变 */
+    /* setter 函数接收修改 age 属性的值，当修改 age 属性时，就会调用 */
+    // 准备好一个数值 number 为 55，需求：为 person5 添加一个 age 属性，并且 age 属性的值是读取的 number 的值
+    let number = 55
+    let person5 = {
+      name: 'jerry',
+      sex: '男',
+      // age: number // 直接在 对象中添加
+    }
+    // 当直接在 person5 对象中读取 number 添加 age 属性时,当某天 number 的值发生改变时，person5中的 age 读取到的 number 依然是当年的 55 ，不会跟着改变，控制台操作一下: number = 56, person5, person5 为：{name: 'jerry', sex: '男', age: 55}, age没有跟着 number 的改变而改变
+    // 设置set函数，并且让 age读取的number值为修改的值，当修改age属性时，person5的值也会自动修改，控制台操作：person5.age = 57, person5, 最后person5为：{name: 'jerry',sex:'男',age:57},注意要是不把接收的修改的值复制给number的话，person5的age属性依然为55，不会改变
+    // (在设置get函数的情况下)当通过 Object.defineProperty 方法为对象添加属性 age(读取number的值) 时，当某天 number 的值发生改变时，person5中的 age 读取到的 number 也会跟着改变，控制台操作一下: number = 56, person5, person5 为：{name: 'jerry', sex: '男', age: 56}
+    Object.defineProperty(person5, 'age', {
+      get() { // 当有人读取person5的age属性时，get函数(getter)就会被调用，且返回值就是添加属性 age 的值
+        console.log('有人读取 age 属性了');
+        return number
+      },
+
+      set(value) { // 当有人修改person5的age属性时，set函数(setter)就会被调用，且会收到修改的具体值
+        console.log('有人修改了age属性，且修改的值为', value);
+        number = value //注意这里只能获取修改的值，但实际上 person5 的age属性的值还是没有被修改，所以要将修改的值 value 复制给 number(age属性的值)
+      }
+
+    })
+
+  </script>
+
+</body>
+
+</html>

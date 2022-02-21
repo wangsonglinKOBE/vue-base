@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Vue中的数据代理</title>
+  <!-- 引入Vue -->
+  <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+
+  <!-- 
+    1.Vue中的数据代理
+      通过 vm 对象来代理 data 对象中属性的操作(读、写、改)
+    2.Vue中数据代理的好处
+      更加方便的操作 data 中数据
+    3.基本原理
+      通过 Object.defineProperty()把 data 对象中所有属性添加到 vm 身上
+      为每一个添加到 vm 上的属性，都指定一个 getter 和 setter
+      在 getter 和 setter 内部去操作(读、写、改) data 中对应的属性
+   -->
+
+  <!-- 准备好一个容器 -->
+  <div id="root">
+    <h2>学校名称：{{name}}、 {{_data.name}}</h2>
+    <h2>学校地址：{{address}}</h2>
+  </div>
+
+</body>
+
+<script type="text/javascript">
+Vue.config.productionTip = false //阻止 vue 在启动时生成的生产提示
+let data = {
+    name: '复旦大学',
+    address: '上海'
+  }
+const vm = new Vue({
+  el: '#root',
+  data
+})
+
+/* 
+  
+  首先，我们在控制台输入 vm 查看 vue实例对象，可以看到，vm 身上有 data 中的 name 属性，而且把鼠标放上去会提示 Invoke property getter, 
+  说明 name 属性是通过数据代理(Object.defineProperty())加到 vm 身上的，那么 vm 身上有就有 name 属性自己的 getter 方法和 setter 方法,
+  那么当有人访问 vm 身上的 name 属性时，getter 开始工作，把一个别的地方的 name 拿过来 当做 vm 身上的 name 使用
+  那么当有人通过 vm 去修改 name 属性时，setter 开始工作，把一个别的地方的 name 去给它改掉
+  就是通过一个对象(vm)代理另一个对象(data)中属性的操作 (读、写) ,所以这里 vm 实际上是在代理操作 data 中的属性
+
+  接下来我们要验证 vm 中 name 属性 的 getter 和 setter 这两条线
+  当有人要读取 vm 中的 name 时，getter工作，把 data 里的 name 返回给 vm
+  如果有人通过 vm 来改变 name 时，setter工作，接收修改的值，然后赋值给 data.name,将 data 里的 name 改掉
+
+  首先我们验证 getter 这条线, 就是验证 vm 里的 name 倒低是不是 getter 方法中返回的 data 中的 name 
+  这个验证就很简单了，在控制台输入：vm.name, 结果为 复旦大学， 然后我们把上面代码中的 data 的 name 改为 123，再去控制台输入：vm.name，结果为 123, 说明 vm 里的 name 属性 就是 data 里的 name 属性
+
+  再来验证 setter 这条线，就是去改变 vm 中的 name 属性值(vm.name)，看看 data 里的 name 属性值对否也跟着改变了
+  在控制台输入：vm.name = fudan,将 vm 里的 name 修改，然后我们验证 data 里的 name 倒低改没改(data.name=fudan吗？)
+  但是！当我们在控制台输入: data.name 时，报错！！，data is not defined (因为 data 不是全局随时都能用的变量，他是 Vue 配置对象里的一个属性而已)
+  那么问题来了，现在陷入了僵局，我们该如何拿到这个 data 呢
+  Vue 内部在拿到 data 后也放在了 vm 身上，就是 vm 身上的 _data, 所以上面其实写成 {{_data.name}} 也是可以的哦，但是为了方便，vue 采用数据代理，只需要写{{name}}
+  所以vm._data 就是 Vue 中的 data ,所以这里用一个小技巧来解决，在外面写一个 data 对象，然后赋值给 Vue 中的 data，然后我们验证 vm.data === data 为 true 
+  所以我们要验证 data.name 是不是 被改变成了 fudan，可以直接验证 vm._data是否为 fudan
+
+  接下来控制从头验证 setter控制台输入: vm.name=fudan, vm._data=fudan, setter 验证成功
+  
+  而且在 _data 里 Vue 内部做了数据劫持(实现响应式)，监听 data 中的属性，当 name 属性发生改变时 页面视图将自动更新，所以这里vm 中的 _data 做了这个数据劫持的处理，这里不做详细的讲解
+
+
+*/
+
+
+</script>
+
+</html>

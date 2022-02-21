@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>理解MVVM</title>
+  <!-- 引入Vue -->
+  <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+  <!-- 准备好一个容器 -->
+  <!-- V : View -->
+  <div id="root">
+    <h1>学校名称：{{name}}</h1>
+    <h1>学校地址：{{address}}</h1>
+    <h3>测试一：{{1+1}}</h3>
+    <h3>测试二(Vue实例对象自身的属性)：{{$options}}</h3>
+    <h3>测试三(Vue原型上的属性 / Vue实例对象的原型身上的 )：{{$emit}}</h3>
+  </div>
+</body>
+
+<script type="text/javascript">
+  Vue.config.productionTip = false //阻止 Vue 在启动时生成生产提示
+
+  const vm = new Vue({ // VM: View Model
+    el: '#root',
+    data() { // M: Model
+      return {
+        name: '复旦大学',
+        address: '上海'
+      }
+    }
+  })
+
+  console.log(vm);
+</script>
+
+<!-- 
+  总结
+  MVVM模型：
+    1、M：Model(模型)：data中的数据
+    2、V：View(视图)：DOM模板代码
+    3、VM：ViewModel(视图模型): Vue实例
+
+  探索发现：
+    1、data中所有的属性，最后都出现在 vm (Vue实例)身上了
+    2、vm (Vue实例)身上所有的属性 及 Vue 原型上所有属性，在 Vue 模板中都可以直接使用
+ -->
+
+</html>
