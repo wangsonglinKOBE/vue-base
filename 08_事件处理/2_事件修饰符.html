@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>事件修饰符</title>
+  <script type="text/javascript" src="../js/vue.js"></script>
+  <style>
+    * {
+      margin-top: 5px;
+    }
+
+    .demo1 {
+      height: 50px;
+      background-color: skyblue;
+      padding-top: 20px;
+    }
+
+    .box1 {
+      height: 60px;
+      background-color: skyblue;
+    }
+
+    .box2 {
+      height: 20px;
+      background-color: pink;
+
+    }
+
+    .list {
+      width: 200px;
+      height: 200px;
+      background-color: tomato;
+      overflow: auto;
+    }
+
+    li {
+      height: 100px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 
+  Vue中的事件修饰符：
+      1、prevent: 阻止默认事件(常用)
+      2、stop: 阻止事件冒泡(常用)
+      3、once: 事件只会触发一次(常用)
+      4、capture: 使用事件捕获模式
+      5、self: 只有 event.target 是当前操作的元素时才触发事件
+      6、passive: 事件的默认行为立即执行，无需等待事件回调执行完毕
+ -->
+
+
+  <!-- 准备好一个容器 -->
+  <div id="root">
+    <h2>欢迎来到{{name}}</h2>
+    <!-- 
+      1、prevent: 阻止默认事件(常用)
+      以前我们为了阻止事件对象的默认行为(比如这里a便签的默认跳转行为)都是使用 e.preventDefault(), 当然这里依然可以使用这个方法，
+      但是 VUe 给我们提供了一个可以阻止事件默认行为的事件修饰符 prevent, 像下面这样写即可：@click.prevent="showInfo",是不是很方便呢
+    -->
+    <h4><a href="http://www.baidu.com" @click.prevent='showInfo'>点我提示信息: prevent</a></h4>
+
+    <!-- 
+      2、stop: 阻止事件冒泡(常用)
+      注意看下面的结构，外层 div 和 里面的 button 都有同一个点击事件，但是如果我们点击按钮提示信息时，
+      你会发现该点击事件被执行了两次，会有两次弹窗，第一次为 button 的事件，第二次为 div 的事件，
+      这就是典型的事件冒泡，从里层冒泡到外层了，那么如何阻止事件冒泡，让我们点击按钮的时候只触发按钮自己的事件而不冒泡到外层再次执行呢
+      像下面这样 @click.stop='showInfo'即可
+    -->
+    <div class="demo1" @click='showInfo'>
+      <button @click.stop='showInfo'>点我提示信息: stop</button>
+    </div>
+
+    <!-- 
+       3、once: 事件只会触发一次(常用)
+       这个就很好理解了，给事假加上 once 修饰符之后，这个事件就只能触发一次，当你以后再点击按钮时就不会触发了
+    -->
+    <button @click.once='showInfo'>点我提示信息: once</button>
+
+    <!-- 
+      4、capture: 使用事件捕获模式
+      JS中的事件流，是分为两个阶段的，捕获阶段 和 冒泡阶段，事件流顺序是先走捕获阶段再走冒泡阶段，而处理事件是在冒泡阶段处理的，这个修饰符的意思就是然事件在捕获阶段就处理，给谁加谁就在捕获阶段处理
+      事件开始执行的时机是冒泡阶段，所以是先执行里层元素的事件，再执行外层元素的事件，所以JS默认是冒泡模式
+      下面有两个div，外面的 div 嵌套着 里面的 div，他两都有同一个点击事件，触发外层的点击事件输出 1，触发里层的事件输出2
+      默认情况下，当我们点击里层的 div 时，控制台输出的顺序是 2,1，也是就上面说的冒泡模式嘛，先执行里层元素的
+      但是我们现在不想先执行里层元素的事件，想先执行外层元素的事件，那么这就需要将 JS 默认的冒泡模式 改成 捕获模式
+      给外层元素加使用 capture 事件修饰符即可，那么现在的执行顺序就是先输出1，再输出2
+      加在外层，那么对于外层元素来说，当在事件流中的捕获阶段时他就执行了
+    -->
+    <div class="box1" @click.capture='showMsg(1)'>
+      div1 :capture
+      <div class="box2" @click='showMsg(2)'>div2</div>
+    </div>
+
+    <!-- 
+      5、self: 只有 event.target 是当前操作的元素时才触发事件
+      这里的意思和阻止事件冒泡有点像，比如下面的div 和 button 都用同一个事件，当我们点击按钮时，事件冒泡，该事件也会触发两次
+      但是我们在控制台打印一下 e.target, 因为执行了两次嘛，打印两次 button 按钮
+      但是第二次的事件执行的 e.target 目标元素是 div
+      所以这里第二次的 event.target 不是当前操作的元素，所以我们给 div 加上 self 修饰符的时候，就只有点击 div 才能触发了，点击按钮的时候，它的 e.event 不是当前操作元素(div)
+      所以和阻止事件冒泡有同样的效果
+     -->
+    <div class="demo1" @click.self='showSelf'>
+      <button @click='showSelf'>点我提示信息: self</button>
+    </div>
+
+    <!-- 
+      6、passive: 事件的默认行为立即执行，无需等待事件回调执行完毕
+      这里我们用两个滚动事件来举例讲解分别是：scroll事件，wheel事件, 先来说说这两个滚动事件
+      scroll滚动事件：滚动滚动条的事件，比较通用，可以滚动滚动条，也可以滚动鼠标滚轮，也可以按上下键滚动，这三种方式他都可以触发事件回调函数执行下面的输出
+      而wheel滚动事件顺然上面的三种滚动方式页面也可以实现滚动，滚动滚动条/鼠标滚轮/按上下键，但是只有在滚动鼠标滚轮的情况下才会触发事件回调函数执行下面的输出
+      他两还有一个小小的区别，就是使用scroll事件的时候，当你滚动到最后了不能在滚动了，那么事件回调也不会执行了，但是使用wheel就相反，就算滚完了只要你还在滚动鼠标滚轮那么特还是会继续执行回调函数
+
+      好了上面介绍了这两个滚动事件，下面进入正题
+      下面的结构 为ul列表，通过样式，overflow: auto;等让它形成滚动条
+      我们先使用 wheel 鼠标滚轮滚动事件来 测试，我们在wheel事件的回调函数中，写一段工作量很大的代码，循环十万遍，看看是什么情况
+      我们发现当我们滚动鼠标滚轮的时候，页面中的这个 ul 他不是立即值行滚动啊，而是在哪儿等啊等等了for循环执行了好一会才 滚动，这样的交互用户肯定还以为是网卡了呢
+
+      下面我们再用 scroll 滚动事件来测试，同样循环十万遍，我们发现就算在如此庞大的工作量下，当我们滚动 ul 时，页面都会立即执行滚动，循环你循环你的，跟他没关系，他是立即滚动的，这下用户就舒服多了
+
+      那么想要改变 使用 wheel 鼠标滚轮滚动事件的这种在庞大工作量下的1反应迟钝，我们就用 passive 事件修饰符，让这个默认滚动行为立即执行，不需要在等这个回调里别的东西执行了
+
+     -->
+    <ul class="list" @wheel.passive='demo'>
+      <li>1</li>
+      <li>2</li>
+      <li>3</li>
+      <li>4</li>
+    </ul>
+
+  </div>
+</body>
+
+<script type="text/javascript">
+  Vue.config.productionTip = false
+  const vm = new Vue({
+    el: '#root',
+    data: {
+      name: '苏科大'
+    },
+    methods: {
+      showInfo(e) {
+        // e.preventDefault();
+        alert('my name is kobe');
+      },
+      showMsg(msg) {
+        console.log(msg);
+      },
+      showSelf(e) {
+        alert('修饰符self')
+        console.log(e.target);
+      },
+      demo() {
+        // console.log('@ passive');
+        for (let i=0; i<100000; i++) {
+          console.log('#');
+        }
+        console.log('累坏了');
+      },
+    }
+  })
+</script>
+
+</html>
