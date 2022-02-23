@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>天气案列</title>
+  <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+  <div id="root">
+    <!-- <h2>今天天气很ppp</h2> -->
+    <h2>今天天气很{{info}}, {{x}}</h2>
+    <button @click='changWeather'>切换天气</button>
+    <button @click='isHot=!isHot;x++'>切换天气</button>
+  </div>
+
+  <script type="text/javascript">
+    Vue.config.productionTip = false
+
+    const vm = new Vue({
+      el: '#root',
+      data: {
+        isHot: true,
+        x: 1
+      },
+      computed: {
+        info() {
+          return this.isHot ? '炎热' : '凉爽'
+        }
+      },
+      methods: {
+        changWeather() {
+          this.isHot = !this.isHot
+        }
+      },
+    })
+    
+  </script>
+</body>
+
+<!-- 
+  注意：上面有一个坑，看到的小伙伴以后就不要踩坑了哟
+  当模板里没有用到计算属性返回的值时，就算计算属性或者data发生改变了，
+  我们谷歌浏览器安装的 vue-devtools 的这个工具中，计算属性和data中的数据都不会改变
+  就上面模板中的第一行就没有用到 计算属性，当我们点击按钮改变 data 属性时，这个vue-devtools工具中的data属性和计算属性都纹丝不动不会改变
+  但是实际上 data 中的属性和 计算属性都是改变了的，不信可以点击一下按钮，在控制台输入一下 vm.info 看看，这个工具人为页面没有改变，那么她也不改变
+
+  然后还有一个小技巧，当方法中的执行语句较少时，可以把执行的语句直接写在模板中比如只有两句，就可以像上面一样写在模板中，用分号隔开
+  @click='isHot = !isHot; x++'
+ -->
+
+</html>

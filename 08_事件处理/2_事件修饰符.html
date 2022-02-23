@@ -71,6 +71,8 @@
     -->
     <div class="demo1" @click='showInfo'>
       <button @click.stop='showInfo'>点我提示信息: stop</button>
+      <!-- 修饰符可以连续写，阻止冒泡和默认事件 -->
+      <a href="http://www.baidu.com" @click.stop.prevent='showInfo'>修饰符可以连续写，阻止冒泡和默认事件</a>
     </div>
 
     <!-- 

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>4.姓名案例_计算属性简写.html</title>
+  <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+
+  <!-- 
+    当计算属性不需要被修改的时候，就不需要 set 函数了，在不使用 set 函数的情况下，
+    计算属性是可以被简写的
+   -->
+
+  <div id="root">
+    姓：<input type="text" v-model='firstName'> <br><br>
+    名：<input type="text" v-model='lastName'> <br><br>
+    <p>全名：{{fullName}}</p>
+  </div>
+
+  <script type="text/javascript">
+    Vue.config.productionTip = false
+
+    const vm = new Vue({
+      el: '#root',
+      data: {
+        firstName: '张',
+        lastName: '三',
+        x: '测试'
+      },
+      computed: {
+        // 完整写法
+        /* fullName: {
+          get() {
+            return `${this.firstName}-${this.lastName}`
+          },
+          set(value) {
+            let arr = value.split('-')
+            this.firstName = arr[0]
+            this.lastName = arr[1]
+          }
+        } */
+
+        // 简写: 此处 fullName 属性不再是一个对象了，vue 内部把它当做 fullName 属性的 get 函数用了
+        fullName() {
+          return `${this.firstName}-${this.lastName}`
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>

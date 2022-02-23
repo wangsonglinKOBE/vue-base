@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>2.天气案例 _计算属性的深度监视.html</title>
+  <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+  <div id="root">
+    <h2>a的值是{{numbers.a}}</h2>
+    <button @click='numbers.a++'>点我让 a + 1 </button>
+    <hr>
+    <h2>b的值是{{numbers.b}}</h2>
+    <button @click='numbers.b++'>点我让 b + 1 </button>
+    <hr>
+    <!-- <button @click='numbers = {c: 222, d: 333}'>点我让 numbers 彻底被替换掉 </button> -->
+  </div>
+
+  <script type="text/javascript">
+    Vue.config.productionTip = false
+
+    const vm = new Vue({
+      el: '#root',
+      data: {
+        numbers: {
+          a: 1,
+          b: 1
+        }
+      },
+      watch: {
+        'numbers.a': { //只检测 a：监视多级结构中某个属性的变化
+          handler() {
+            console.log('a被改变了');
+          }
+        },
+
+        numbers: { //监视多级结构中所有属性的变化,监测整个 numbers ，number 中任何一个属性变了都会被监测，所以需要使用深度监测 deep
+          handler() {
+            console.log('numbers改变了');
+          },
+          deep: true // 深度监测，默认为 false
+        }
+      }
+    })
+
+  </script>
+</body>
+
+<!-- 
+   总结：
+   深度监视：
+    1、Vue中的watch 默认不检查对象内部值的改变
+    2、配置 deep：true可以监测对象内部值的改变
+
+   备注：
+    1、Vue 自身可以监测对象内部值的改变，但 Vue 提供的watch 默认不可以，要加上 deep 才行
+    2、使用 watch 时根据数据的具体结构，决定是否采用深度监视
+-->
+
+</html>

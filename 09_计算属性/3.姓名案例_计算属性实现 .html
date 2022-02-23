@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>3.姓名案例_计算属性实现 .html</title>
+  <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+
+  <!-- 
+    在 Vue 中你想理解好什么是计算属性，那么你首先得知道在 Vue 中什么是属性，
+    对于 Vue 来说，它人为你 data 中所写的属性就是 Vue 中的属性。
+    所以计算属性和 data 中的属性一样，也是直接放在 vm 身上的,vm.fullName可以直接读取到
+    所谓的 计算属性，就是拿着 Vue 中的属性(data中的属性)，去加工计算出一个全新的属性,
+
+    而且要注意：计算属性 fullName 它是一个属性，不是一个函数，和 data 里的属性一样都放在 vm 身上，
+    所以在模板中使用的时候，直接写计算属性的名即可，不要去把它当做函数调用哈，后面简写的计算属性看着很像函数，但其实只是代替了 get 函数
+   -->
+
+  <div id="root">
+    姓：<input type="text" v-model='firstName'> <br><br>
+    名：<input type="text" v-model='lastName'> <br><br>
+    测试：<input type="text" v-model='x'> <br><br>
+    <p>全名：{{fullName}}</p>
+    <p>全名：{{fullName}}</p>
+    <p>全名：{{fullName}}</p>
+    <p>没有被计算属性依赖的数据，无论怎么改变，计算属性也不会被调用{{x}}</p>
+
+  </div>
+
+  <script type="text/javascript">
+    Vue.config.productionTip = false
+
+    const vm = new Vue({
+      el: '#root',
+      data: {
+        firstName: '张',
+        lastName: '三',
+        x: '测试'
+      },
+      computed: {
+        fullName: {
+          // get有什么作用? 当有人读取 fullName 计算属性时，get就会被调用, 且返回值就作为 fullName 的值
+          /* 
+          get什么时候调用？
+          1.初次读取fullName时，上面模板中使用了三次，但是fullName只被调用了一次
+          2.所依赖的数据发生变化时，即当firstName或者lastName发生改变时
+         */
+          get() {
+            console.log('get被调用了');
+            console.log(this); //此处的 this 是 vm
+            return `${this.firstName}-${this.lastName}`
+          },
+          // 如果这个 fullName 以后会被人改，那么就得写 setter 
+          set(value) {
+            // set什么时候调用？当fullNme被修改时
+            console.log('fullNam被修改了，set调用了');
+            let arr = value.split('-')
+            this.firstName = arr[0]
+            this.lastName = arr[1]
+          }
+        }
+        // 计算属性中的 get 和 set 都是被 Vue 所管理的，所以会被自动调用自动读取
+      }
+    })
+  </script>
+</body>
+
+<!-- 
+  总结：
+  计算属性：
+    1、定义: 要用的属性不存在，要通过已有的属性计算得来，注意这里的属性，最上面已经给出解释
+    2、原理: 底层借助了 Object.defineProperty 方法提供的 getter 和 setter
+    3、get函数什么时候执行？
+      a: 初次读取时执行一次
+      b: 当依赖的数据发生变化时会被再次调用
+    4、优势：与 methods 实现相比，内部有缓存机制(复用), 效率更高，调试方便
+    5、备注：
+       a: 计算属性最终会出现在 vm 上，直接读取使用即可
+       b: 如果计算属性要被修改，那必须写 set 函数去响应修改，且 set 中要引起计算时依赖的数据发生改变
+ -->
+
+</html>

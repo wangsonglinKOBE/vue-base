@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>2.姓名案例_methods实现.html</title>
+  <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+  <div id="root">
+    姓：<input type="text" v-model='firstName'> <br><br>
+    名：<input type="text" v-model='lastName'> <br><br>
+    <p>全名：{{fullName()}}</p>
+    <p>全名：{{fullName()}}</p>
+    <p>全名：{{fullName()}}</p>
+  </div>
+
+  <script type="text/javascript">
+    Vue.config.productionTip = false
+    new Vue({
+      el: '#root',
+      data: {
+        firstName: '张',
+        lastName: '三'
+      },
+      methods: {
+        fullName() {
+          console.log('@---methods中方法的调用次数 = 初次模板中调用的次数和数据(data中的数据)发生改变的次数');
+          return `${this.firstName} - ${this.lastName}`
+        }
+      },
+    })
+  </script>
+</body>
+
+<!-- 
+  初次模板中调用了几次 methods 中的方法，那么methods 中的方法就会调用几次，上面模板中写了三个 fullName方法的调用，那么初次就会调用三次
+  只要data中的数据发生改变，那么Vue就会重新解析模板, 
+  只有解析模板才能知道哪里用了data中的数据然后更新模板，
+  只要解析到插值语法里面的方法，那么就会再调用一遍方法，
+  每次改变 data 数据就会重新调用一次 methods 里的方法，导致效率不高
+ -->
+
+</html>

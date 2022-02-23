@@ -67,6 +67,8 @@
 
     <!-- alt 系统修饰键配合 keyup 使用 上3.a -->
     <input class="inp" type="text" placeholder="按下Alt键提示输入信息" @keyup.Alt='showInfo5'> <br>
+    <!-- 只有按下 ctrl+ y 时才能出发回调 -->
+    <input class="inp" type="text" placeholder="按下 ctrl + y键提示输入信息" @keyup.ctrl.y='showInfo5'> <br>
 
     <!-- alt 系统修饰键配合 keydown 使用 上3.b -->
     <input class="inp" type="text" placeholder="按下Alt键提示输入信息" @keydown.Alt='showInfo5'> <br>
