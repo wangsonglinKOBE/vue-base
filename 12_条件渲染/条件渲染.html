@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>条件渲染</title>
+  <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+
+  <!-- 
+    v-show 的底层实现: 给节点加了 display: none，进行了隐藏节点，但实际上该节点还是存在的(在切换频率高的情况下适用)
+    v-if : 彻底删除了节点
+    v-show 和 v-if 的值只要是最终会被转为 true 或 false 就行
+   -->
+
+  <div id="root">
+    <!-- 使用 v-show 做条件渲染 -->
+    <!-- <h2 v-show='false'> 欢迎来到{{name}} </h2> -->
+    <!-- <h2 v-show='1 === 1'> 欢迎来到{{name}} </h2> -->
+
+
+    <!-- 使用 v-if 做条件渲染 -->
+    <!-- <h2 v-if='false'> 欢迎来到{{name}} </h2> -->
+    <!-- <h2 v-if='1 === 1'> 欢迎来到{{name}} </h2> -->
+
+    <h1>当前的 n 值是 {{n}}</h1>
+    <button @click='n++'>点我 n+1</button>
+
+    <!-- 使用 v-show 做条件渲染 : 解析时三行代码都解析 -->
+    <!-- 
+      <div v-show='n === 1'>Angular</div>
+      <div v-show='n === 2'>React</div>
+      <div v-show='n === 3'>Vue</div> 
+    -->
+
+    <!-- 使用 v-if 做条件渲染 : 解析时三行代码都解析 -->
+    <!-- 
+      <div v-if='n === 1'>Angular</div>
+      <div v-if='n === 2'>React</div>
+      <div v-if='n === 3'>Vue</div>
+     -->
+
+
+    <!-- 使用 v-if v-else-if v-else 做条件渲染 : 解析到符合条件就不再往下解析 -->
+    <!-- 
+        这里的 v-if v-else-if v-else 和 JS 中的 if(){} else if(){} else{} 的逻辑用法时一样的，
+        所以使用 v-else时就不写条件，表示所有条件都不满足时, 
+        并且注意，这里的代码和 js 一样，中间不能再有其他的模板代码
+    -->
+    <!-- 
+        <div v-if='n === 1'>Angular</div>
+        <div v-else-if='n === 2'>React</div>
+        <div v-else-if='n === 3'>Vue</div>
+        <div v-else>哈哈哈，v-else</div>
+    -->
+
+
+    <!-- 这里有三个 h2 都在 同一条件满足时显示，像下面这样写代码重复率有点高 -->
+    <!-- 
+      <h2 v-if='n === 1'>你</h2>
+      <h2 v-if='n === 1'>我</h2>
+      <h2 v-if='n === 1'>他</h2>
+
+      <h2 v-show='n === 1'>广州</h2>
+      <h2 v-show='n === 1'>北京</h2>
+      <h2 v-show='n === 1'>上海</h2>
+    -->
+
+    <!-- 
+      这里有三个 h2 都在 同一条件满足时显示，像下面这样写就比上面好很多: v-if 与 template,
+      注意，template只能和 v-if 这样使用，和 v-show不行
+     -->
+    <template v-if='n === 1'>
+      <h2>你</h2>
+      <h2>我</h2>
+      <h2>他</h2>
+    </template>
+
+  </div>
+
+  <script type="text/javascript">
+    Vue.config.productionTip = false
+
+    new Vue({
+      el: '#root',
+      data: {
+        name: '苏科大',
+        n: 0
+      }
+    })
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title> 5.姓名案例_watch实现.html </title>
+  <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+
+  <!-- 
+    本文和 4.姓名案例_计算属性简写.html 形成对比(watch 和 computed)
+  -->
+
+
+  <div id="root">
+    姓：<input type="text" v-model='firstName'> <br><br>
+    名：<input type="text" v-model='lastName'> <br><br>
+    <p>全名：{{fullName}}</p>
+  </div>
+
+  <script type="text/javascript">
+    Vue.config.productionTip = false
+
+    const vm = new Vue({
+      el: '#root',
+      data: {
+        firstName: '张',
+        lastName: '三',
+        fullName: '张-三'
+      },
+      watch: {
+        firstName(newValue) {
+          setTimeout(() => {
+            this.fullName = `${newValue}-${this.lastName}`
+          }, 1000)
+        },
+        lastName(newValue) {
+          this.fullName = `${this.firstName}-${newValue}`
+        }
+      }
+    })
+  </script>
+</body>
+
+<!-- 
+  总结：
+  computed 和 watch 之间的区别：
+  1、 computed 能完成的功能，watch 都可以完成，一般没有异步操作的情况下，我们可以选择 computed
+  2、 wacth 能完成的功能，computed 不一定能完成，例如：watch 可以进行异步操作
+
+  两个重要的小原则：
+  1、  所以被 Vue 管理的函数，最好写成普通函数，这样 this 的指向才是 vm 或 组件实例
+  2、所有不被 Vue 所管理的函数(定时器的回调、ajax的回调函数等)，最好写成箭头函数，
+     这样 this 的指向才是 vm 或 组件实例
+ -->
+
+</html>

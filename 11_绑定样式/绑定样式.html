@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>绑定样式</title>
+  <script type="text/javascript" src="../js/vue.js"></script>
+  <style>
+    .basic {
+      width: 400px;
+      height: 100px;
+      border: 1px solid black;
+    }
+
+    .happy {
+      background: -webkit-gradient(linear, 0 0, 0 bottom, from(#ff0000), to(rgba(0, 0, 255, 0.5)));
+    }
+
+    .sad {
+      background-color: grey;
+      border: 3px solid green;
+    }
+
+    .normal {
+      background-color: skyblue;
+      border: 1px solid black;
+    }
+
+    .demo1 {
+      background-color: red;
+    }
+
+    .demo2 {
+      font-size: 30px;
+    }
+
+    .demo3 {
+      border-radius: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- 
+    说明：
+    上面的样式中， basic 是代表基本的样式，happy, sad, normal代表三种心情(mood)，开心，悲伤，和一般
+    demo1，demo2，demo3，意思是一个div 同时有这三个样式
+   -->
+
+  <!-- 
+    需求一:
+            下面div本身就有一个基本样式 basic,
+            下面的 div 一开始有两个样式，basic 和 normal
+            当点击 div 时 normal 样式变成 happy 样式 (从一般变成开心)
+
+    需求二:
+            下面div本身就有一个基本样式 basic,
+            下面的 div 一开始有两个样式，basic 和 normal
+            当点击 div 时 normal 样式变成 happy, sad, normal 三种样式中随机的一种
+
+    需求三：
+            下面div本身就有一个基本样式 basic,
+            但是这个 div 不确定要给他加多少个样式，
+            可能是只加 demo1,或者是 demo1,demo2,demo3都加，具体加几个不确定
+    
+    需求四：
+            下面div本身就有一个基本样式 basic,
+            但是 demo1 和 demo2 样式都不确定用不用，可能只用其中一个，也肯都不用，也可能都用
+
+    总结：
+            不管是通过 class 绑定样式还是 style 绑定样式，都是使用 v-bind 动态绑定属性，
+            那么 v-bind:class="xxx", 你只要记住一点，万变不离其中，只要你用的 v-bind，只要你加了冒号，
+            那么这个 xxx 就会被当做 JS 表达式去解析
+    -->
+
+  <div id="root">
+    <!-- 绑定class样式 -- 字符串写法, 适用于样式的类名不确定，需要动态指定，后期改变 -->
+    <!-- <div class="basic" :class='mood' @click='changMood'>需求一，{{name}}</div> -->
+
+    <!-- 需求一的基础上随机切换样式 -->
+    <div class="basic" :class='mood' @click='changMood2'>需求二，{{name}}</div> <br><br>
+
+    <!-- 绑定class样式 -- 数组写法, 适用于要绑定的样式个数不确定，名字也不确定 -->
+    <div class="basic" :class='classArr' @click='changMood3'>需求三，{{name}}</div> <br><br>
+    <!-- <div class="basic" :class="['demo1', 'demo2', 'demo3']">需求三(这样写就不能被Vue操作了，没法变了，不能写事件)，{{name}}</div> <br><br> -->
+
+    <!-- 绑定class样式 -- 对象写法, 适用于要绑定的样式个数确定，名字也确定，但是不确定用不用，要动态决定用不用 -->
+    <div class="basic" :class='classObj' @click='changMood4'>需求四，{{name}}</div> <br><br>
+    <!-- <div class="basic" :class="{demo1: false,demo2: false}">需求四(这样写就不能被Vue操作了，没法变了，不能写事件)，{{name}}</div> <br><br> -->
+
+
+    <!-- 绑定 style 样式 -- 对象写法 -->
+    <div class="basic" :style="styleObj">style绑定内联样式，{{name}}</div> <br><br>
+    <!-- <div class="basic" :style="{fontSize: 30+'px', color:'red'}">style绑定内联样式，{{name}}</div> <br><br> -->
+
+    <!-- 绑定 style 样式 -- 数组写法 -->
+    <div class="basic" :style="styleArr">style绑定内联样式，{{name}}</div>
+    <!-- <div class="basic" :style="[styleObj]">style绑定内联样式，{{name}}</div> -->
+  </div>
+
+  <script type="text/javascript">
+    Vue.config.productionTip = false
+
+    new Vue({
+      el: '#root',
+      data: {
+        name: 'Kobe-Bryant',
+        mood: 'normal',
+        classArr: ['demo1', 'demo2', 'demo3'],
+        classObj: {
+          demo1: false,
+          demo2: false
+        },
+        styleObj: {
+          fontSize: 20 + 'px',
+          color: "red"
+        },
+        styleArr: [
+          {
+            backgroundColor: 'grey'
+          },
+          {
+            color: 'blue'
+          }
+        ]
+      },
+      methods: {
+        changMood() {
+          this.mood = 'happy'
+        },
+        changMood2() {
+          const arr = ['happy', 'normal', 'sad']
+          const index = Math.floor(Math.random() * 3) //Math.random()生成0-1的随机数,包括0,但是不包括1, Math.floor()向下取整，只取0,1,2
+          this.mood = arr[index]
+        },
+        changMood3() {
+          // 这里就可以随机操作数组了，想要哪个样式要哪个，比如这里我们不要 demo1
+          this.classArr.shift()
+        },
+        changMood4() {
+          // 初始是两个样式都不用，现在两个都用
+          this.classObj.demo1 = true
+          this.classObj.demo2 = true
+        }
+      },
+    })
+  </script>
+
+</body>
+
+</html>

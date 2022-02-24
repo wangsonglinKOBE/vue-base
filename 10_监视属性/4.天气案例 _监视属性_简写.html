@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>4.天气案例 _监视属性_简写.html</title>
+  <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+  <!-- 
+   简写：和计算属性类似，当被监测的属性只有 handler 函数时，
+   是可以直接把 被监测的属性当做函数名来替换掉 handler 函数的
+   watch 和 $watch 都是同理的
+   注意：都是被 vue 管理的函数，不允许写成箭头函数，否则 this 指向会变成 window
+  -->
+
+  <div id="root">
+    <h2>今天天气很{{info}}</h2>
+    <button @click='changWeather'>切换天气</button>
+  </div>
+
+  <script type="text/javascript">
+    Vue.config.productionTip = false
+
+    const vm = new Vue({
+      el: '#root',
+      data: {
+        isHot: true
+      },
+      computed: {
+        info() {
+          return this.isHot ? '炎热' : '凉爽'
+        }
+      },
+      methods: {
+        changWeather() {
+          this.isHot = !this.isHot
+        }
+      },
+      watch: {
+        // 正常的完整写法
+        /*  isHot: {
+           immediate: true, // 初始化时让 handler 调用一下，默认为 false
+           deep: true, // 深度监视
+           handler(newValue, oldValue) {
+             console.log('isHot改变了', newValue, oldValue);
+           }
+         } */
+
+        // 简写
+        isHot(newValue, oldValue) {
+          console.log('isHot改变了', newValue, oldValue);
+        }
+      }
+    })
+
+
+    // 完整写法
+    /* vm.$watch('isHot', {
+      handler(newValue, oldValue) {
+        console.log('isHot改变了', newValue, oldValue);
+      },
+      immediate: true,
+      deep: true,
+    }) */
+
+    // 简写: 第二个参数不再传配置对象，直接传函数
+    vm.$watch('isHot', function (newValue, oldValue) {
+      console.log('isHot改变了', newValue, oldValue);
+    })
+
+  </script>
+</body>
+
+</html>
