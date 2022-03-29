@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>1.数据更新时的一个问题.html</title>
+  <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+  <!-- 下面通过点击更新马冬梅的信息来演示这个问题 -->
+  <div id="root">
+    <h2>人员列表</h2>
+    <button @click='updateMei'>更新马冬梅的信息</button>
+    <ul>
+      <li v-for='(p, index) in persons' :key="p.id">
+        {{p.name}}-{{p.age}}-{{p.sex}}
+      </li>
+    </ul>
+  </div>
+
+  <script type="text/javascript">
+    Vue.config.productionTip = false
+
+    const vm = new Vue({
+      el: '#root',
+      data: {
+        persons: [
+          { id: 001, name: '马冬梅', age: 30, sex: '女' },
+          { id: 002, name: '周冬雨', age: 19, sex: '女' },
+          { id: 003, name: '周杰伦', age: 32, sex: '男' },
+          { id: 004, name: '温兆伦', age: 15, sex: '男' },
+        ]
+      },
+      methods: {
+        updateMei() {
+          // 1、改每个对像的属性，这种方式奏效，可以使用
+          /* 
+            this.persons[0].name = '马老师';
+            this.persons[0].age = '50';
+            this.persons[0].sex = '男'; 
+          */
+
+
+          /* 
+          2、直接替换掉整个对象, 这样改数据，Vue没有检测到数据的更改，所以当点击更改马冬梅的数据时，
+             页面和 vue-devtools(vue开发中工具)都没有响应数据的改变，页面也没有更新，开发者工具也没有更新。
+             那么当我们点击按钮后，马冬梅的信息倒低有没有被修改呢？
+             答案是其实已经被修改了，不信你可以试试vm.persons[0].name看看去
+             因为vue并没有监测到数据的改变，所以页面它就没有给你更新，那开发者工具就也没有给你更新了
+             这就是更新数据时的一个问题 
+          */
+          this.persons[0] = { id: 001, name: '马老师', age: 50, sex: '男' } // 不奏效
+
+          // this.persons.splice(0, 1, { id: 001, name: '马老师', age: 50, sex: '男' }) // 奏效
+
+
+          /* 
+            注意，这里又有一个坑，就是当我们先点击按钮改变数据后，再点击vue-devtools时，你神奇的发现马冬梅的数据被改了
+            但是如果你先点击的vue-devtools再点击的按钮改变数据，这时候vue-devtools的数据就不会改变
+            这个情况注意一下就行了，别被迷惑了
+          */
+        }
+      },
+    })
+  </script>
+</body>
+
+</html>

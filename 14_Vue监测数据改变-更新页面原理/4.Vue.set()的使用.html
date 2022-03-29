@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>4.Vue.set的使用</title>
+  <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+  <div id="root">
+    <h2>学校名称：{{name}}</h2>
+    <h2>学校地址：{{address}}</h2>
+    <h2 v-if='school.leader'>校长是: {{school.leader}} --- 正确</h2>
+    <!-- <h2 v-if='leader'>校长是: {{leader}} --- 错误</h2> -->
+    <button @click='addLeader'>点我添加一个可检测的响应式的校长</button>
+    <hr>
+    <h2>学生信息</h2>
+    <button @click='addSex'>点我添加一个可检测的响应式的学生性别</button>
+    <h2>学生姓名: {{student.name}}</h2>
+    <h2 v-if='student.sex'>学生性别(注意这里下面的data中是没有sex属性的): {{student.sex}}</h2>
+    <h2>学生年龄: 真实年龄{{student.age.rAge}}，对外年龄{{student.age.sAge}}</h2>
+    <h2>朋友们</h2>
+    <ul>
+      <li v-for='p in student.friends' :key='p.name'>{{p.name}}--{{p.age}}</li>
+    </ul>
+  </div>
+</body>
+
+<script type="text/javascript">
+  Vue.config.productionTip = false
+
+  const vm = new Vue({
+    el: '#root',
+    data: {
+      name: '苏科大',
+      address: '北京',
+      school: {},
+      student: {
+        name: 'tom',
+        age: {
+          rAge: 40,
+          sAge: 29
+        },
+        friends: [
+          { name: 'jack', age: 35 },
+          { name: 'kobe', age: 36 }
+        ]
+      }
+    },
+    methods: {
+      addSex() {
+        this.$set(this.student, 'sex', '男')
+        // Vue.set(this.student, 'sex', '男')
+      },
+      addLeader() {
+        this.$set(this.school, 'leader', '小张') //正确
+        // this.$set(this, 'leader', '小张') //错误
+
+        /* 
+        这里可要注意了，避免踩坑，添加一个响应式属性时，是不能直接加在 vm (this)身上或者 vm._data身上的，
+        只能先写好一个自己的对象，在给这个对象添加属性
+        */
+      }
+    },
+  })
+</script>
+
+</html>

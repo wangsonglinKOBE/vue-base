@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>v-cloak指令.html</title>
+  <style>
+    [v-cloak] {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- 
+    本节主要是讲解在网速慢的情况下，Vue还没有完全解析时，页面就显得很尴尬
+    因为存在JS阻塞，这里我把 vue 放在结构下面引入
+    当在控制台把网络调成慢的 3G 时，你会发现这个 {{name}} 被活生生的搬到页面上了，
+    等Vue解析完成了才变成 kobe
+    所以 v-cloak 就是来结局这个问题的，它没有值，直接把他当做属性选择器来配合样式使用
+    当Vue还没有加载完成时，我们就使用它定义的样式，当vue加载完成时，他就会自动呗删除
+   -->
+
+  <div id="root">
+    <h2 v-cloak>{{name}}</h2>
+  </div>
+
+  <script type="text/javascript" src="../js/vue.js"></script>
+</body>
+
+<script type="text/javascript">
+  Vue.config.productionTip = false
+  new Vue({
+    el: '#root',
+    data: {
+      name: 'kobe'
+    }
+  })
+</script>
+
+<!-- 
+  v-cloak(没有值):
+    1.本质是一个特殊属性，Vue实例创建完毕并接管容器后，会删掉 v-cloak属性
+    2.配合 css 使用可以解决网速慢时页面展示出 {{xxx}}的问题
+ -->
+
+</html>

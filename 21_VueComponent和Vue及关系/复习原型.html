@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+</head>
+<body>
+  <script type="text/javascript">
+  // 定义一个 Demo 构造函数
+  function Demo() {
+      this.a = 1
+      this.b = 2
+    }
+    // 创建一个 Demo 的实例对象
+    const d = new Demo()
+
+    // 只要你是函数，不管是构造函数还是啥函数，身上都有一个属性 prototype,中文名字叫 显示原型属性
+    console.log(Demo.prototype); //显示原型属性
+    // 只要你是对象，不管是实例对象还是啥对象，身上都有一个属性，__proto__,中文名叫 隐式原型属性
+    console.log(d.__proto__); //隐式原型属性
+    console.log(d);
+    // 在这里，无论你是构造函数身上的 显示原型属性，还是实例对象身上的 隐式原型属性，他们都指向了同一个对象 => 原型对象
+    console.log(Demo.prototype === d.__proto__); //true，这两个属性都指向了同一个原型对象
+    Demo.prototype.x = 99
+    console.log(d.__proto__.x, d.x); // 99, Demo给自己的显示原型属性添加一个属性x为99，d的隐式原型属性也能访问到 x 为 99,他两都是指向同一个原型对象的
+    /*
+     程序员一般通过给构造函数的 显示原型属性 往原型对象身上放东西，然后实例对象的隐式原型属性就能拿到放上去的东西，
+     程序员一般直接通过实例对象去点放上去的东西，直接拿
+    */
+  </script>
+</body>
+</html>

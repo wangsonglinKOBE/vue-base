@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>VueComponent</title>
+  <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+
+  <!-- 
+    关于 VueComponent:
+      1.school组件本质是一个名为 VueComponent 的构造函数，且不是程序员定义的，是 Vue.extend生成的(Vue源码可见)
+      
+      2.我们只需要写 <school></school>, Vue 解析时会帮我们创建 school 组件(VueComponent)的实例对象,
+        即Vue帮我们执行的：new VueComponent(options)
+      
+      3.特别注意：每次调用 Vue.extend时，返回的都是一个全新的 VueComponent ！！！
+
+      4.关于this指向：
+        (1).组件配置中：vc
+            data函数、methods中的函数、watch中的函数、computed中的函数，他们的this均是【VueComponent的实例对象】
+        (2). new Vue(options)中配置：vm
+            data函数、methods中的函数、watch中的函数、computed中的函数，他们的this均是【Vue的实例对象】
+
+      5. VueComponent的实例对象，以后简称vc(也可称之为：组件实例对象)
+         Vue的实例对象，以后简称vm
+
+      6.怎么能体现一个 vm 在管理着很多个 vc 呢?
+        在下面我们用 vm 取出 Vue 的的实例对象，然后在控制台输出 vm,可以看到vm身上有一个 $children 属性，点开他，
+        你会发现里面有两个 vc ，一个是 school组件，一个是hello组件，
+        同样的 vc 中也会有 $children 属性，那么这个 vc 里包含几个 vc，这个 children 也会有几个
+   -->
+
+  <div id="root">
+    <!-- 验证上面的第二条 -->
+    <school></school>
+    <!-- <school></school> -->
+    <hello></hello>
+    <!-- 这里要说明的上面的第三条，这里new了两次VueComponent，但是这两个school组件对应的VueComponent不是同一个VueComponent，下面已经说明  -->
+    <br>
+    <button @click='showVueThis'>点我打印nue Vue中的this</button>
+  </div>
+
+  <script type="text/javascript">
+    Vue.config.productionTip = false
+
+    // 定义school组件
+    const school = Vue.extend({
+      name: 'school',
+      template: `
+      <div>
+        <h3>学校名称：{{schoolName}}</h3>
+          <h3>学校地址：{{address}}</h3>
+          <button @click='showThis'>点我打印组件中的this</button>
+      </div>
+        `,
+      data() {
+        return {
+          schoolName: '苏科大',
+          address: '上海',
+        }
+      },
+      methods: {
+        // 验证第四条
+        showThis() {
+          console.log('组件中的this', this); //结果为 VueComponent 的实例对象
+        }
+      },
+    })
+
+    console.log('@school组件', school); // 输出 VueComponent构造函数(验证上面的第一条)
+
+    // 定义hello 组件，用于验证上面第三条
+    const hello = Vue.extend({
+      template: `<h2>{{msg}}</h2>`,
+      data() { return { msg: '我是hello组件' } }
+    })
+    console.log('#hello组件', hello);
+    console.log(school === hello);  // 输出 false 从Vue源码中也可以看到，Vue.extend函数中每次调用都会重新定义一个 VueComponent,再返回
+
+    // 创建 vm
+    const vm = new Vue({
+      el: '#root',
+      components: {
+        school,
+        hello
+      },
+      methods: {
+        showVueThis() {
+          console.log('new Vue中的this', this);
+        }
+      },
+    })
+  </script>
+
+</body>
+
+</html>

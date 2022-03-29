@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>2分析生命周期.html</title>
+  <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+
+
+  <div id="root">
+    <h2>当前的n值是:{{n}}</h2>
+    <button @click='add'>点我n+1</button>
+    <button @click='bye'>点我销毁vm</button>
+  </div>
+
+  <script type="text/javascript">
+    Vue.config.productionTip = false
+
+
+    const vm = new Vue({
+      el: '#root',
+      // template: `
+      //   <div>
+      //     <h2>当前的n值是:{{n}}</h2>
+      //     <button @click='add'>点我n+1</button>
+      //   </div>
+      // `,
+      data: {
+        n: 1,
+      },
+      methods: {
+        add() {
+          this.n++
+        },
+        bye() {
+          console.log('bye');
+          this.$destroy()
+          // 销毁后，页面依然不变(Vue工作的成果)，但是Vue是不会在工作了，你点击加一也不好使了
+        }
+      },
+      beforeCreate() {
+        console.log('beforeCreate');
+        // console.log(this);
+        // debugger; 
+        // 这里使用 debugger调试断点让代码走到这里就停住，发现this里面是没有 _data 和 n 和 add 方法的,数据监测和数据代理还未开始
+      },
+      created() {
+        console.log('created');
+        // console.log(this);
+        // debugger;
+        // 这里使用 debugger调试断点让代码走到这里就停住，发现this里面是有 _data 和 n 和 add 方法的,数据监测和数据代理已经完成
+      },
+      beforeMount() {
+        console.log('beforeMount');
+        // console.log(this);
+        // debugger
+        // 这里Vue已经把模板解析完成但是还没有挂载到页面中去
+      },
+      mounted() {
+        console.log('mounted');
+        // 这里Vue已经把模板解析完成并且已将将DOM挂载到页面中去
+      },
+      beforeUpdate() {
+        console.log('beforeUpdate');
+        // console.log(this.n);
+        // debugger
+        // 打开断点点击按钮，n为2，页面还是显示1，此时数据是新的，但页面是旧的，数据和页面尚未保持同步
+      },
+      updated() {
+        console.log('updated');
+        // console.log(this.n);
+        // debugger
+        // 打开断点点击按钮，n为2，页面也是显示2，此时数据是新的，页面也是新的，数据和页面保持同步
+      },
+      beforeDestroy() {
+        // 销毁前钩子，此时 vm中所有的 data、methods、指令等都处于可用状态
+        // 一般在此阶段：关闭定时器，取消订阅消息，解绑自定义事件等收尾操作
+        console.log('beforeDestroy');
+        console.log(this.n);
+      },
+      destroyed() {
+        // 销毁vm后
+        console.log('destroyed');
+      },
+    })
+
+    // vm.$mount('#root') 
+    /* 当上面没有配置 el 选项时，就可以调用 vm.$mount('#root') 来解析模板
+    ,注意，如果是使用的 template,则template中的结构会替换掉 <div id='root'></div>的内容包括<div id='root'></div> */
+
+
+  </script>
+
+</body>
+
+</html>

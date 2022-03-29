@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>sessionStorage.html</title>
+</head>
+
+<body>
+  <h2>sessionStorage会话存储(和localStorage的四个api一模一样)，将浏览器关闭数据将被删除</h2>
+  <button onclick="saveData()">点我保存一个数据</button>
+  <button onclick="readData()">点我读取一个数据</button>
+  <button onclick="deleteData()">点我删除一个数据</button>
+  <button onclick="deleteAllData()">点我清空所有数据</button>
+
+  <script>
+    // 增加
+    function saveData() {
+      const p = { name: '张三', age: 18 }
+      sessionStorage.setItem('person', JSON.stringify(p))
+      sessionStorage.setItem('adc', 'vn')
+    }
+
+    // 获取
+    function readData() {
+      console.log(JSON.parse(sessionStorage.getItem('person')));
+    }
+
+    // 删除
+    function deleteData() {
+      sessionStorage.removeItem('person')
+    }
+
+    // 清空
+    function deleteAllData() {
+      sessionStorage.clear()
+    }
+
+    let a = {x:1, y:2, z:3}
+    // a = {...a, z:5}
+    // console.log(a);
+
+  </script>
+</body>
+
+</html>

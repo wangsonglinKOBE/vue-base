@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>key的原理.html</title>
+  <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+
+  <!-- 
+    理解：
+    key 是虚拟 DOM 的标识，在模板更新时，虚拟 DOM 依靠 key 的值来进行更新前后的 diff 算法，实现复用的效果
+    再把最终的结果转成真实 DOM
+    如果没有写 key属性 vue则会把index索引值自动作为 key 的值
+   -->
+
+  <div id="root">
+
+    <!-- 遍历数组 -->
+    <h2>人员列表</h2>
+    <button @click='add'>添加一个老刘</button>
+    <ul>
+      <li v-for='(p, index) in persons' :key="index">
+        {{index}}-{{p.name}}-{{p.age}} <input type="text">
+      </li>
+    </ul>
+
+  </div>
+
+  <script type="text/javascript">
+    Vue.config.productionTip = false
+
+    new Vue({
+      el: '#root',
+      data: {
+        persons: [
+          { id: 001, name: '张三', age: 18 },
+          { id: 002, name: '李四', age: 19 },
+          { id: 003, name: '王五', age: 20 }
+        ]
+      },
+      methods: {
+        add() {
+          const p = { id: 004, name: '老刘', age: 21 }
+          this.persons.unshift(p)
+        }
+      },
+    })
+  </script>
+</body>
+
+<!-- 
+  面试题：React、Vue 中的 key 有什么作用？( key 的内部原理)
+    
+    1、虚拟 DOM 中 key 的作用：
+       key是虚拟DOM对象的标识，当状态中的数据发生变化时，Vue会根据【新数据】生成【新的虚拟DOM】，
+       随后Vue进行【新虚拟DOM】与【旧虚拟DOM】的差异比较，比较规则如下：
+
+    2、对比规则：
+       (1)、旧虚拟DOM中找到了与新虚拟DOM相同的key:
+            a: 若虚拟DOM中内容没变，直接使用之前的真实DOM
+            b: 虚拟DOM中内容变了，则生成新的真实DOM，随后替换掉页面中之前的真实DOM
+       (2)、旧虚拟DOM中未找到与新虚拟DOM相同的key
+            a: 创建新的真实DOM，随后渲染到页面
+
+    3、用index作为key可能会引发的问题：
+       a: 若对数据进行：逆序添、逆序删除等破坏顺序的操作：
+          会产生没有必要的真实DOM更新 ==> 界面效果没问题，但效率低
+       b: 如果结构中还包括输入类的DOM：
+          会产生错误DOM更新  ===> 界面有问题
+    
+    4、在不加 key 属性时，vue将自动将索引值index作为 key 的值
+
+ -->
+
+</html>

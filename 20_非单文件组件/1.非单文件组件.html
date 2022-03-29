@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>非单文件组件.html</title>
+  <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+
+  <script type="text/javascript">
+    let data = {
+      a: 1,
+      b: 2
+    }
+    const x = data
+    const y = data //在控制台改变 data或x或y对象中任意属性的值，其他两个对象对应属性的值也会改变
+
+    function data2() {
+      return {
+        a: 1,
+        b: 2
+      }
+    }
+    const x2 = data2()
+    const y2 = data2() //在控制台改变 data2().a = 99 时，完全不影响 x2 和 y2,每次调用 data2都返回一个全新的对象
+  </script>
+
+  <!-- 非单文件组件: 一个文件中包含 n 个组件 -->
+  <!-- 
+    组价中的 data 为啥不能用对象，而要用函数？
+    因为同一个组件如果被用来多次，而你还用的对象，那么就有一个对象引用地址始终都是一个对象
+    所以你在一个地方改掉了data里的某个属性，你会发现其他地方的这个属性也被改变了
+    就比如 一个对象 data={a:1, b:2} 这个对象给两个人用了，给x和y都用了,
+    然后你再改变这三个人中任意一个的 a 属性的值，你会发现其他的对象里的 a 属性的值也跟着改变
+    所以vue要求在组件中 data 必须为函数，每次调用data函数时都会返回一个全新的对象，这样就不存在引用地址始终都是一个的问题了
+    上面代码已经说明
+   -->
+
+  <div id="root">
+    <!-- 使用全局注册组件 -->
+    <kobe></kobe>
+    <h2>{{msg}}</h2>
+    <!-- 第三步：使用组件标签 -->
+    <school></school>
+    <hr>
+    <student></student>
+    <hr>
+    <hr>
+  </div>
+
+
+  <!-- 用于测试全局注册组件：在上面的 实例 和 下面的实例中都可以用同一个组件 -->
+  <div id="root2">
+    <!-- 使用全局注册组件 -->
+    <kobe></kobe>
+  </div>
+
+  <script type="text/javascript">
+    Vue.config.productionTip = false
+
+    // 第一步：创建 school 组件
+    const school = Vue.extend({
+      // el: '#root', 组件定义时，不要用el 配置项，因为最终所有组件都要被一个 vm 管理，由 vm 决定服务于哪个容器
+      template: `
+        <div>
+          <h3>学校名称：{{schoolName}}</h3>
+          <h3>学校地址：{{address}}</h3>
+        </div>
+      `,
+      data() {
+        return {
+          schoolName: '苏科大',
+          address: '上海',
+        }
+      }
+    })
+
+    // 第一步：创建 student 组件
+    const student = Vue.extend({
+      template: `
+        <div>
+          <h3>学生姓名：{{studentName}}</h3>
+          <h3>学生年龄：{{age}}</h3>
+        </div>
+      `,
+      data() {
+        return {
+          studentName: 'kobe',
+          age: 18
+        }
+      }
+    })
+
+    // 创建一个用于全局注册的组件
+    const kobe = Vue.extend({
+      template: '<h2>{{msg}}</h2>',
+      data() {
+        return { msg: '我是全局组件' }
+      }
+    })
+
+    // 全局注册kobe组件
+    Vue.component('kobe', kobe)
+    // Vue.component('组件名字', 组件在位置)
+
+    new Vue({
+      el: '#root',
+      data: {
+        msg: 'Hello!'
+      },
+      // 第二步：注册组件(局部注册)
+      components: {
+        // school: school, 组件名：组件位置
+        school,
+        student
+      }
+    })
+
+    new Vue({
+      el: '#root2'
+    })
+  </script>
+
+</body>
+
+<!-- 
+  Vue中使用组件的三大步骤：
+    一、定义组件(创建组件)
+    二、注册组件(局部组成，全局注册)
+    三、使用组件标签
+
+  如何定义一个组件：
+    使用 Vue.extend(options)创建，其中 options 和 new Vue(options)时传入的那个options几乎一样，区别如下：
+      1、el不要写，为什么？—— 最终所有的组件都要经过一个 vm 管理，由vm的el决定服务于哪个容器
+      2、data必须写成函数，为啥？ —— 避免组件被复用时，数据存在引用关系
+  
+  备注；
+    1、全局注册组件：Vue.component('组件名'，组件)
+    2、局部注册组件：new Vue的时候传入 components 配置项
+ -->
+
+</html>

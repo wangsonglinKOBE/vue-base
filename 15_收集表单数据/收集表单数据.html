@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>收集表单数据.html</title>
+  <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+
+  <!-- 
+    v-model修饰符: number(转化成数字类型)、lazy(失去焦点再收集数据)、trim(去掉输入收尾空格)
+   -->
+
+  <div id="root">
+    <form @submit.prevent='demo'>
+      账号: <input v-model.trim='userInfo.account' type="text"> <br><br>
+      密码: <input v-model='userInfo.password' type="password"> <br><br>
+      年龄: <input v-model.number='userInfo.age' type="number"> <br><br>
+
+      性别:
+      男 <input v-model='userInfo.sex' type="radio" name="sex" value="nan">
+      女<input v-model='userInfo.sex' type="radio" name="sex" value="nv"><br><br>
+
+      爱好:
+      学习<input v-model='userInfo.hobby' value="xuexi" type="checkbox">
+      打游戏 <input v-model='userInfo.hobby' value="game" type="checkbox">
+      吃饭 <input v-model='userInfo.hobby' value="eat" type="checkbox"><br><br>
+
+      所属校区
+      <select v-model='userInfo.city'>
+        <option value="">请选择校区</option>
+        <option value="beijing">北京</option>
+        <option value="shanghai">上海</option>
+        <option value="wuhan">武汉</option>
+      </select><br><br>
+
+      其他信息:
+      <textarea v-model.lazy='userInfo.other'></textarea> <br><br>
+
+      <!-- 这里因为只需要知道勾没勾，所以不用给 agree 配置初始值为数组 和给复选框配置 value 值，知道是 true或 false即可 -->
+      <input type="checkbox" v-model='userInfo.agree'> 阅读并接受 <a href="http://www.baidu.com">用户协议</a>
+      <button>提交</button>
+    </form>
+  </div>
+
+  <script type="text/javascript">
+    Vue.config.productionTip = false
+    new Vue({
+      el: '#root',
+      data: {
+        userInfo: {
+          account: '',
+          password: '',
+          age:'',
+          sex: 'nv',
+          hobby: [],
+          city: 'beijing',
+          other: '',
+          agree: ''
+        }
+      },
+      methods: {
+        demo() {
+          console.log(JSON.stringify(this.userInfo));
+        }
+      },
+    })
+  </script>
+
+  <!-- 
+    总结：
+    收集表单数据：
+      若 ：<input type='text'/>, 则 v-model 收集的是 value 值，用户输入的就是 value 值
+      若 ：<input type='radio'/>, 则 v-model收集的就是 value 值，且要给标签配置 value 值，给同一组配置相同的name值
+      若 ：<input type='checkbox'/>
+           1.没有配置 input 的 value 属性，那么收集的就是 checked (勾选true, or 未勾选false, 是布尔值)
+           2.配置 input 的 value 属性：
+             a: v-model 的初始值是非数组，那么收集的就是 checked (勾选true, or 未勾选false, 是布尔值)
+             b: v-model 的初始值是数组，那么收集的就是 value 组成的数组
+
+      注 ：v-model 的三个修饰符：
+           lazy: 失去焦点再收集数据
+           number：输入字符串转为有效数字
+           trim: 输入字符的首尾空格过滤
+   -->
+</body>
+
+</html>

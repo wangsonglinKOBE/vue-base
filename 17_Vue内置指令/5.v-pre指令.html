@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>5.v-pre指令.html</title>
+  <script type="text/javascript" src="../js/vue.js"></script>
+  </style>
+</head>
+
+<body>
+
+  <!-- 
+    v-pre(没有值)
+      1.让Vue跳过其所在节点的编译过程，直接展示，vue不再解析
+      2.可以利用它跳过：没有使用指令语法、插值语法的节点，会加快编译，优化性能
+   -->
+
+  <div id="root">
+    <h2 v-pre>Vue其实很简单</h2>
+    <h2 v-pre>当前的n值是: {{n}}</h2>
+    <button  v-pre @click='n++'>点我n+1</button>
+  </div>
+</body>
+
+<script type="text/javascript">
+  Vue.config.productionTip = false
+  new Vue({
+    el: '#root',
+    data: {
+      n: 1
+    }
+  })
+</script>
+
+
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>几个注意点</title>
+  <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+  <!-- 
+      1.关于组件名：
+        一个单词组成：
+          第一种写法(首字母小写)：school
+          第二种写法(首字母大写)：School
+        
+        多个单词组成：
+          第一种写法(短横杠): mg-school
+          第二种写法(单词首字母都大写): MySchhol(需要 Vue 脚手架支持)
+      
+        备注：可以使用 name 配置项指定组件在开发者工具中呈现的名字
+      
+      2.关于组件标签：
+        第一种：<school></school>
+        第二种：<school/> (需要脚手架支持)
+
+      3.一个简写方式：
+        const school = Vue.extend(options) 可简写为 const school = opthins
+   -->
+
+  <div id="root">
+    <h2>{{msg}}</h2>
+    <school></school>
+  </div>
+
+  <script type="text/javascript">
+    Vue.config.productionTip = false
+
+    // const s = Vue.extend({
+    //   template: `
+    //     <div>
+    //       <h3>学校名称：{{schoolName}}</h3>
+    //       <h3>学校地址：{{address}}</h3>
+    //     </div>
+    //   `,
+    //   data() {
+    //     return {
+    //       schoolName: '苏科大',
+    //       address: '上海',
+    //     }
+    //   }
+    // })
+
+
+    // 创建组件的简写
+    const s = {
+      template: `
+        <div>
+          <h3>学校名称：{{schoolName}}</h3>
+          <h3>学校地址：{{address}}</h3>
+        </div>
+      `,
+      data() {
+        return {
+          schoolName: '苏科大',
+          address: '上海',
+        }
+      },
+      name: 'atguigu' //配置组件在开发工具中的名字(组件的名字)
+    }
+
+    new Vue({
+      el: '#root',
+      data:{
+        msg: 'kobe'
+      },
+      components: {
+        school: s
+      }
+    })
+  </script>
+</body>
+
+</html>

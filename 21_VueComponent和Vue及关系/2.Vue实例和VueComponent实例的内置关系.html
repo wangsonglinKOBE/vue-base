@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>2.Vue实例和VueComponent实例的内置关系.html</title>
+  <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+  <!-- 在学习本小节之前你首先得会原型的知识(./复习原型.html) -->
+  <!-- 
+    一个重要的内置关系：vue实例和组件实例
+    1.VueComponent.prototype.__proto__ === Vue.prototype
+    2.为什么要有这个关系：让组件实例对象 vc 可以访问到 Vue原型上的属性、方法
+   -->
+  <div id="root">
+    <school></school>
+  </div>
+
+  <script type="text/javascript">
+    Vue.config.productionTip = false
+
+    Vue.prototype.x = 99
+    
+
+    // 定义school组件
+    const school = Vue.extend({
+      name: 'school',
+      template: `
+      <div>
+          <h3>学校名称：{{schoolName}}</h3>
+          <h3>学校地址：{{address}}</h3>
+          <button @click='showX'>点我输出x</button>
+      </div>
+        `,
+      data() {
+        return {
+          schoolName: '苏科大',
+          address: '上海',
+        }
+      },
+      methods: {
+        showX(){
+          console.log(this.x);
+        }
+      },
+    })
+
+    new Vue({
+      el: '#root',
+      data: {
+        msg: '你好'
+      },
+      components:{
+        school
+      }
+    })
+
+    console.log(school.prototype.__proto__ === Vue.prototype);
+  </script>
+</body>
+
+</html>

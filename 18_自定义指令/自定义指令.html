@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>自定义指令</title>
+  <script type="text/javascript" src="../js/vue.js"></script>
+  <style>
+    .demo {
+      background-color: darkorange;
+    }
+    .demo2 {
+      background-color: darkorchid;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 
+    需求1：定义一个 v-big 指令，和v-text功能类似，但会把绑定的数据放大 10 倍
+    需求2：定义一个 v-fbind 指令，和 v-bind 功能类似，但可以让其所绑定的 input 元素默认获取焦点
+   -->
+
+  <div id="root">
+    <h2>当name发生改变时模板重新解析，那么big函数也会被调用 {{name}}</h2>
+    <h2>当前的 n 值是：<span v-text='n'></span> </h2>
+    <h2>放大10倍后的 n 值是：<span v-big='n'></span> </h2>
+    <h2>放大10倍后的 n 值是：<span v-big-number='n'></span> </h2>
+    <button @click='n++'>点我 n+1</button>
+    <input type="text" v-fbind:value='n'>
+    <input type="text" v-quanju:class='ooo'>
+  </div>
+
+  <div id="test">
+    <h2>实例2</h2>
+    <input type="text" v-fbind:value='x'>
+    <input type="text" v-quanju:class='ppp'>
+  </div>
+</body>
+
+<script type="text/javascript">
+
+  // 全局指令
+  Vue.directive('fbind', {
+    bind(element, binding) { //bind调用时机: 指令与元素成功绑定时
+      console.log('bind');
+      element.value = binding.value; //元素 value 值绑定数据
+    },
+    inserted(element, binding) { // inserted调用时机：指令所在元素被插入页面时
+      console.log('inserted');
+      element.focus() //获取焦点
+    },
+    update(element, binding) { // 指令所在的模板被重新解析时
+      console.log('update');
+      element.value = binding.value; //继续同步更新节点的 value
+      element.focus() //更新了继续获取焦点
+    }
+  })
+
+  // 全局指令
+  Vue.directive('quanju', (element, binding) => {
+    element.className = binding.value
+  })
+
+  Vue.config.productionTip = false
+  new Vue({
+    el: '#root',
+    data: {
+      name: 'kobe',
+      n: 1,
+      ooo: 'demo'
+    },
+    directives: { //指定以指令配置项，directive
+      big(element, binding) {
+        // big什么时候调用：1.指令与元素成功绑定时，2.指令所在的模板被重新解析时
+        // console.log(element, binding); //真实DOM 和 绑定对象
+        // console.log(element instanceof HTMLElement);
+        element.innerText = binding.value * 10
+      },
+      /*  big: function(element, binding){
+         element.innerText = binding.value * 10
+       }, */
+      'big-number'(element, binding) {
+        element.innerText = binding.value * 10
+      },
+      /* 'big-number': function(element, binding) {
+        element.innerText = binding.value * 10
+      }, */
+      /*  
+      fbind(element, binding) {
+         element.value = binding.value;
+         element.focus()//默认回去焦点 (这里就奇怪了，代码没毛病，为啥input没有默认获取焦点呢？请看复习.html)
+         // 所以这里问题就出现在 fbind 函数第一次调用也就是上面说的 指令与元素成功绑定时 ,这时候 vue 可并没有把input节点放入页面
+         // 所以我们应该在 vue将指令与元素绑定成功并且 input 被放到页面的时候再执行 focus()默认获取焦点
+         // 所以用函数的形式定义指令，是找不到这个合适的时机的
+       }, 
+       */
+      fbind: {
+        bind(element, binding) { //bind调用时机: 指令与元素成功绑定时
+          console.log('bind');
+          element.value = binding.value; //元素 value 值绑定数据
+        },
+        inserted(element, binding) { // inserted调用时机：指令所在元素被插入页面时
+          console.log('inserted');
+          element.focus() //获取焦点
+        },
+        update(element, binding) { // 指令所在的模板被重新解析时
+          console.log('update');
+          element.value = binding.value; //继续同步更新节点的 value
+          element.focus() //更新了继续获取焦点
+        }
+      }
+      // 这样来看，如果我们使用函数的形式定义指令，其实就是执行了，使用对象形式定义中的 bind 和 update
+    }
+  })
+
+  new Vue({
+    el: '#test',
+    data: {
+      x: 1,
+      ppp: 'demo2'
+    }
+  })
+</script>
+
+<!-- 自定义指令时在自定义时直接使用 v-xxx 后面的xxx, 在节点使用时使用 v-xxx -->
+
+<!-- 
+  自定义指令总结：
+    一、定义语法：
+        1、局部指令：
+          new Vue({                               
+            'directives':{指令名：配置对象} ||  directives:{指令名：配置对象}
+          }) 
+          或
+          new Vue({ 
+            directives(){}  || 'directives'(){}
+          })
+
+        2、全局指令：和定义全局过滤器很相似
+        Vue.directive('指令名', 配置对象) 或 Vue.directive('指令名', callback)
+
+    二、配置对象中常用的3个回调：
+        1. bind: 指令与节点成功绑定时调用
+        2. inserted: 指令所在节点被插入页面时调用
+        3.update: 指令所在模板结构被重新解析时调用
+  
+    三、备注：
+        1、指令定义时不加 v- ,但使用时要加 v-
+        2、指令如果是多个单词，要使用 kebab-case命名方式，不要使用camelCase驼峰命名
+ -->    
+
+</html>

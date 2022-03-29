@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>复习</title>
+  <style>
+    .demo{
+      background-color: chocolate;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <button>点我给页面添加一个 input框</button>
+
+    <script type="text/javascript">
+      const btn = document.getElementsByTagName('button')[0]
+      console.log(btn);
+      btn.onclick = () => {
+        const input = document.createElement('input')
+
+        input.value = 99
+        input.className = 'demo'
+
+        document.body.appendChild(input)
+
+       
+        /*  注意 document.body.appendChild(input) 这句
+            一定是先把 input 节点放入 页面之后 才能进行下面这两句的操作
+            获取节点和把父元素添加背景
+            不然都没有到页面，那么也就不会获取节点和也不知道父节点是谁
+            如果把下面的代码写在这句前面，那么就不好使了
+        */
+        input.focus()
+        input.parentElement.style.backgroundColor = 'skyblue'
+        
+        
+      }
+    </script>
+  </div>
+</body>
+</html>
