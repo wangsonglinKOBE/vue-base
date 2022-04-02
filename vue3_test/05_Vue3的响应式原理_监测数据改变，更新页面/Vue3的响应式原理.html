@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Vue3的响应式原理</title>
+</head>
+
+<body>
+  <script type="text/javascript">
+
+    // 模拟 Vue2 中实现响应式
+    // 源数据
+    const person = {
+      name: 'kobe',
+      age: 18
+    }
+
+    // 代理检测实现页面更新的数据
+    let p = {}
+
+    const keys = Object.keys(person)
+    keys.forEach(k => {
+      Object.defineProperty(p, k, {
+        configurable: true, // 控制属性是否可以被删除，默认值为 false
+        get() { //读取 p 的某个属性时调用
+          return person[k]
+        },
+        set(value) { //修改 p 的某个属性时调用
+          console.log(`有人修改了${k}属性，修改的值为${value}，我监测到了，我要去更新界面了`);
+          person[k] = value
+        }
+      })
+    })
+    /*
+      Vue2使用 Object.defineProperty 实现数据代理和检测数据的改变实现页面更新的响应式,
+      在对象中，只能监测到某个属性的更改，而不能监测到给 对象添加属性 和 删除属性，无法捕获到添加和删除，
+                所以页面就不能实现响应式的添加和删除，
+                所以 Vue2 中针对对象的 添加 和 删除必须使用 this.$set(要添加的对象, '添加的属性', '属性值')和 this.$delete(p, 'name')
+      在数组中，同样也是想要对数组进行更改使用下标也不会被 vue2 所检测到，所以只能使用 vue2 进行重新封装的原生数组身上的方法来进行实现响应式
+    */
+
+
+
+    // 模拟 Vue3 中实现响应式 => 使用 es6中的 Proxy 代理对象 和 Reflect 反射对象实现
+    // 首先了解一下 es6 中的 Reflect, 可以实现对对象的增删改查
+    const obj = { a: 1, b: 2 }
+    Reflect.get(obj, 'a') // 读取 a 属性
+    Reflect.set(obj, 'a', 3) // 修改 a 属性
+    Reflect.set(obj, 'c', 4) // 添加 c 属性
+    Reflect.deleteProperty(obj, 'c') // 删除 c 属性
+
+    // 源数据
+    const car = {
+      name: '亚洲龙',
+      price: '20w'
+    }
+
+    // 代理数据  => new Proxy(被代理的源数据，{捕获对象的怎删改查的方法})
+    let c = new Proxy(car, {
+      // 读取 时调用
+      get(target, propName) {
+        console.log(`读取了c身上的${propName}属性`, target); // target:源数据，propName: 属性名
+        return Reflect.get(target, propName)
+      },
+      // 修改 和 增加 属性时调用
+      set(target, propName, val) {
+        console.log(`修改了${propName}属性,值为${val},我要去更新页面了`);
+        Reflect.set(target, propName, val)
+      },
+      // 删除 属性时调用
+      deleteProperty(target, propName) {
+        console.log(`删除了${propName}属性,我要去更新页面了`);
+        // return delete target[propName] // delete target[propName] 删除属性会返回一个布尔值，true为删除成功，否则为失败
+        return Reflect.deleteProperty(target, propName)
+      }
+    })
+    /*
+    Vue3 中使用的 Proxy 实现对数据增删改查时的捕获并更新页面，实现响应式，不再像 Vue2 中那样只能捕获到读和改了，
+    针对对象的 真删改查 Proxy 都能代理，所以Vue3也就借助这一点做到了对数据的怎删改查都实现响应式
+    所以在 Vue3 中给对象添加属性可以直接 c.xxx 而不用$set()了，删除直接 delete c[xxx]，不用$delete()
+    对于数组也可以直接通过下标去改变了
+    */
+
+  </script>
+</body>
+
+</html>
